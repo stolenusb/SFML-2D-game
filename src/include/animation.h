@@ -2,18 +2,32 @@
 
 #include <SFML\Graphics.hpp>
 
+enum TEXTURES
+{
+    PLAYER_IDLE = 0,
+    PLAYER_WALK = 1,
+    PLAYER_RUN = 2,
+    PLAYER_JUMP = 4,
+    TEXTURE_COUNT
+};
+
 class Animation 
 {
-    public:
-    void Set(sf::Sprite *sprt, int imgCount, sf::Vector2u imgSize);
+public:
+    Animation(sf::Sprite &playerSprite, unsigned int playerSize);
+    ~Animation();
+
+    void loadTextures();
     void Animate();
+    void Set(unsigned int texture, unsigned int imageCount);
 
-    public:
-    int imageCount = 0;
+    bool lookRight =  true;
 
-    private:
-    sf::Sprite *sprite;
-    sf::Vector2u imageSize;
+private:
+    sf::Texture playerTextures[TEXTURE_COUNT];
+    sf::Sprite *playerSprite;
+    unsigned int imageSize;
+    unsigned int Count;
     sf::IntRect rect;
-    sf::Clock animClock;
+    sf::Clock clock;
 };

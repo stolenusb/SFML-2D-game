@@ -1,24 +1,50 @@
 #include "animation.h"
+#include <iostream>
 
-void Animation::Set(sf::Sprite *sprt, int imgCount, sf::Vector2u imgSize)
+Animation::Animation(sf::Sprite &playerSprite, unsigned int playerSize) :
+    playerSprite(&playerSprite)
 {
-    this->sprite = sprt;
-    imageCount = imgCount - 1;
-    this->imageSize = imgSize;
+    this->imageSize = playerSize;
+    rect = sf::IntRect(0, 0, playerSize, playerSize);
+}
 
-    rect = sf::IntRect(0, 0, imageSize.x, imageSize.y);
+Animation::~Animation()
+{
+}
+
+void Animation::loadTextures()
+{
+    if( !playerTextures[PLAYER_IDLE].loadFromFile("..\\assets\\textures\\magician\\idle.png") ||
+        !playerTextures[PLAYER_WALK].loadFromFile("..\\assets\\textures\\magician\\walk.png") ||
+        !playerTextures[PLAYER_RUN].loadFromFile("..\\assets\\textures\\magician\\run.png") ||
+        !playerTextures[PLAYER_JUMP].loadFromFile("..\\assets\\textures\\magician\\jump.png"))
+
+        std::cout << "(-) Failed to load one of the player textures. " << std::endl;
+}
+
+void Animation::Set(unsigned int texture, unsigned int imageCount)
+{
+    Count = imageCount;
+
+    playerSprite->setTexture(playerTextures[texture]);
 }
 
 void Animation::Animate()
 {
-    if(animClock.getElapsedTime().asSeconds() > 0.18f)
-    {
-        if(rect.left == (imageSize.x * imageCount))
+    playerSprite->setOrigin(playerSprite->getLocalBounds().width/2, playerSprite->getLocalBounds().height/2);
+
+    if(lookRight == true)
+        playerSprite->setScale(1, 1);
+    else
+        playerSprite->setScale(-1, 1);
+    
+    if(clock.getElapsedTime().asSeconds() > 0.18f) {
+        if(rect.left == (imageSize * 7)) // Using 7 instead of double Count var, (temporary bug fix for texture disappearing)
             rect.left = 0;
         else
-            rect.left += imageSize.x;
+            rect.left += imageSize;
         
-        sprite->setTextureRect(rect);
-        animClock.restart();
+        playerSprite->setTextureRect(rect);
+        clock.restart();
     }
 }
