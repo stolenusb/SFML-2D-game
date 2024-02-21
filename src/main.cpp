@@ -13,10 +13,9 @@ int main()
     sf::Clock clock;
     double deltaTime = 0.0f;
 
-    // ------------------- PLAYER --------------------
     Player player;
 
-    // ------------------- MAP GROUND --------------------
+    // ------------------- MAP GROUND --------------------  
     sf::RectangleShape ground(fgroundSize);
     sf::Texture groundTexture;
     
@@ -41,14 +40,14 @@ int main()
         background.setFillColor(sf::Color::Blue);
         std::cout << "(-) Failed to load background texture" << std::endl;
     }
-    
+
     // ------------------- GAME LOOP -------------
     while(window.isOpen())
     {
         sf::Event event;
         while(window.pollEvent(event))
         {
-            if(event.type == sf::Event::Closed)
+            if(event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
                 window.close();
         }
 
@@ -58,9 +57,10 @@ int main()
 
         // ------------------- RENDER -------------
         window.clear(sf::Color::Black);
+
         window.draw(background);
         window.draw(ground);
-        window.draw(player.Sprite);
+        player.Draw(window);
 
         window.display();
     }

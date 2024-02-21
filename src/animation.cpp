@@ -4,7 +4,6 @@
 Animation::Animation(sf::Sprite &playerSprite, unsigned int playerSize) :
     playerSprite(&playerSprite)
 {
-    this->imageSize = playerSize;
     rect = sf::IntRect(0, 0, playerSize, playerSize);
 }
 
@@ -19,32 +18,36 @@ void Animation::loadTextures()
         !playerTextures[PLAYER_RUN].loadFromFile("..\\assets\\textures\\magician\\run.png") ||
         !playerTextures[PLAYER_JUMP].loadFromFile("..\\assets\\textures\\magician\\jump.png"))
 
-        std::cout << "(-) Failed to load one of the player textures. " << std::endl;
+        std::cout << "(-) Failed to load one of the player textures." << std::endl;
+    else
+        std::cout << "(+) Loaded player textures." << std::endl;
 }
 
 void Animation::Set(unsigned int texture, unsigned int imageCount)
 {
-    Count = imageCount;
+    imgCount = imageCount - 1;
 
     playerSprite->setTexture(playerTextures[texture]);
 }
 
 void Animation::Animate()
 {
-    playerSprite->setOrigin(playerSprite->getLocalBounds().width/2, playerSprite->getLocalBounds().height/2);
-
-    if(lookRight == true)
-        playerSprite->setScale(1, 1);
-    else
-        playerSprite->setScale(-1, 1);
-    
     if(clock.getElapsedTime().asSeconds() > 0.18f) {
-        if(rect.left == (imageSize * 7)) // Using 7 instead of double Count var, (temporary bug fix for texture disappearing)
-            rect.left = 0;
+        if(currImage >= imgCount)
+            currImage = 0;
         else
-            rect.left += imageSize;
-        
-        playerSprite->setTextureRect(rect);
+            currImage++;
+
         clock.restart();
     }
+
+    if(lookRight == true) {
+        rect.width = abs(rect.width);
+        rect.left = currImage * rect.width;
+    } else {
+        rect.width = -abs(rect.width);
+        rect.left = (currImage + 1) * abs(rect.width);
+    }
+        
+    playerSprite->setTextureRect(rect);
 }

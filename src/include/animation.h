@@ -27,7 +27,8 @@ private:
     sf::Texture playerTextures[TEXTURE_COUNT];
     sf::Sprite *playerSprite;
     unsigned int imageSize;
-    unsigned int Count;
+    unsigned int imgCount;
+    unsigned int currImage;
     sf::IntRect rect;
     sf::Clock clock;
 };
