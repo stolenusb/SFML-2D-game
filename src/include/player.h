@@ -9,16 +9,16 @@ public:
     Player();
     ~Player();
 
+    void Jumped(sf::Event &event);
     void Update(double deltaTime);
     void Draw(sf::RenderWindow &window);
-
+    
     sf::Sprite Sprite;
-    sf::RectangleShape entity;
     Animation animation;
 
 private:
     sf::Vector2f Velocity;
-    float moveSpeed = 0.2f;
-    float jumpSpeed = 1.0f;
-    bool canJump = true;
+    float moveSpeed = 200.0f;
+    float jumpForce = 400.0f;
+    bool Jumping = false;
 };

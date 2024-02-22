@@ -4,10 +4,10 @@
 
 enum TEXTURES
 {
-    PLAYER_IDLE = 0,
-    PLAYER_WALK = 1,
-    PLAYER_RUN = 2,
-    PLAYER_JUMP = 4,
+    PLAYER_IDLE,
+    PLAYER_WALK,
+    PLAYER_RUN,
+    PLAYER_JUMP,
     TEXTURE_COUNT
 };
 
