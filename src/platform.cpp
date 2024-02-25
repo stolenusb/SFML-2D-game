@@ -1,3 +1,4 @@
+#include <iostream>
 #include "platform.h"
 
 Platform::Platform(std::string textureFile, sf::Vector2f fSize, sf::Vector2f fPos) :
