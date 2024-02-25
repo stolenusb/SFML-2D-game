@@ -1,47 +1,27 @@
 #include <SFML\Graphics.hpp>
 #include <iostream>
 
-sf::Vector2u windowSize(1280, 720);
-
 #include "player.h"
+#include "platform.h"
 
 int main()
 {
     // ------------------- INITIALIZATION --------------------
-    sf::Vector2f fgroundSize(windowSize.x, 175);
+    sf::Vector2f windowSize(1280.0f, 720.0f);
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "GameProject");
     sf::Clock clock;
     double deltaTime = 0.0f;
 
     Player player;
-
-    // ------------------- MAP GROUND --------------------  
-    sf::RectangleShape ground(fgroundSize);
-    sf::Texture groundTexture;
     
-    if(groundTexture.loadFromFile("..\\assets\\textures\\ground.jpg")) {
-        ground.setTexture(&groundTexture);
-        std::cout << "(+) Loaded ground texture." << std::endl;
-    } else if(!groundTexture.loadFromFile("..\\assets\\textures\\ground.jpg")) {
-        ground.setFillColor(sf::Color::Green);
-        std::cout << "(-) Failed to load ground texture" << std::endl;
-    }
+    Platform background("background.jpg", windowSize, sf::Vector2f(0.0f, 0.0f));
+    Platform ground("ground.jpg", sf::Vector2f(windowSize.x, 175.0f), sf::Vector2f(0.0f, windowSize.y - 175.0f));
 
-    ground.setPosition(sf::Vector2f(0, windowSize.x - windowSize.y));
+    Platform platform_1("", sf::Vector2f(150.0f, 40.0f), sf::Vector2f(200.0f, 520.0f));
+    Platform platform_2("", sf::Vector2f(150.0f, 40.0f), sf::Vector2f(400.0f, 420.0f));
+    Platform platform_3("", sf::Vector2f(150.0f, 40.0f), sf::Vector2f(600.0f, 320.0f));
 
-    // ------------------- BACKGROUND TEXTURE -------------
-    sf::RectangleShape background(sf::Vector2f(windowSize.x, windowSize.y));
-    sf::Texture backgroundTexture;
-
-    if(backgroundTexture.loadFromFile("..\\assets\\textures\\background.jpg")) {
-        background.setTexture(&backgroundTexture);
-        std::cout << "(+) Loaded background texture." << std::endl;
-    } else if(!backgroundTexture.loadFromFile("..\\assets\\textures\\background.jpg")) {
-        background.setFillColor(sf::Color::Blue);
-        std::cout << "(-) Failed to load background texture" << std::endl;
-    }
-
-    // ------------------- GAME LOOP -------------
+    // ------------------- GAME LOOP ----------------------
     while(window.isOpen())
     {
         sf::Event event;
@@ -53,15 +33,24 @@ int main()
             player.Jumped(event);
         }
 
-        // ------------------- PLAYER -------------
+        // ------------------- PLAYER ----------------------
         deltaTime = clock.restart().asSeconds();
         player.Update(deltaTime);
+        // Player collision with platforms.
+        player.collider.checkCollision(ground.Entity);
+        player.collider.checkCollision(platform_1.Entity);
+        player.collider.checkCollision(platform_2.Entity);
+        player.collider.checkCollision(platform_3.Entity);
 
-        // ------------------- RENDER -------------
+        // ------------------- RENDER ----------------------
         window.clear(sf::Color::Black);
 
-        window.draw(background);
-        window.draw(ground);
+        window.draw(background.Entity);
+        window.draw(ground.Entity);
+        window.draw(platform_1.Entity);
+        window.draw(platform_2.Entity);
+        window.draw(platform_3.Entity);
+
         player.Draw(window);
 
         window.display();

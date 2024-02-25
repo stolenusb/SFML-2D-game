@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
+
+project(GameProject VERSION 0.1)
+
+find_package(SFML 2.5 
+  COMPONENTS 
+    system window graphics network audio REQUIRED)
+
+file(GLOB SOURCES "src/*.cpp")
+add_executable(GameProject ${SOURCES})
+target_link_libraries(GameProject sfml-graphics)
+target_include_directories(GameProject PUBLIC "src/include")

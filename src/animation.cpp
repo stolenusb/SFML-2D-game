@@ -2,9 +2,9 @@
 #include <iostream>
 
 Animation::Animation(sf::Sprite &playerSprite, unsigned int playerSize) :
-    playerSprite(&playerSprite)
+    playerSprite(playerSprite)
 {
-    rect = sf::IntRect(0, 0, playerSize, playerSize);
+    textureRect = sf::IntRect(0, 0, playerSize, playerSize);
 }
 
 Animation::~Animation()
@@ -27,7 +27,7 @@ void Animation::Set(unsigned int texture, unsigned int imageCount)
 {
     imgCount = imageCount - 1;
 
-    playerSprite->setTexture(playerTextures[texture]);
+    playerSprite.setTexture(playerTextures[texture]);
 }
 
 void Animation::Animate()
@@ -42,12 +42,12 @@ void Animation::Animate()
     }
 
     if(lookRight == true) {
-        rect.width = abs(rect.width);
-        rect.left = currImage * rect.width;
+        textureRect.width = abs(textureRect.width);
+        textureRect.left = currImage * textureRect.width;
     } else {
-        rect.width = -abs(rect.width);
-        rect.left = (currImage + 1) * abs(rect.width);
+        textureRect.width = -abs(textureRect.width);
+        textureRect.left = (currImage + 1) * abs(textureRect.width);
     }
         
-    playerSprite->setTextureRect(rect);
+    playerSprite.setTextureRect(textureRect);
 }

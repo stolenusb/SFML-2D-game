@@ -2,13 +2,13 @@
 
 #include <SFML\Graphics.hpp>
 
-enum TEXTURES
+enum PLAYER_TEXTURES
 {
     PLAYER_IDLE,
     PLAYER_WALK,
     PLAYER_RUN,
     PLAYER_JUMP,
-    TEXTURE_COUNT
+    PLAYER_TEXTURES_COUNT
 };
 
 class Animation 
@@ -24,11 +24,11 @@ public:
     bool lookRight =  true;
 
 private:
-    sf::Texture playerTextures[TEXTURE_COUNT];
-    sf::Sprite *playerSprite;
+    sf::Sprite &playerSprite;
+    sf::Texture playerTextures[PLAYER_TEXTURES_COUNT];
+    sf::IntRect textureRect;
+    sf::Clock clock;
     unsigned int imageSize;
     unsigned int imgCount;
     unsigned int currImage;
-    sf::IntRect rect;
-    sf::Clock clock;
 };

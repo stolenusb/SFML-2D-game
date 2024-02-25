@@ -1,10 +1,14 @@
 #include "player.h"
 #include "math.h"
+#include <iostream>
 
 Player::Player() :
-    animation(Sprite, 128)
+    animation(Sprite, 128), collider(Entity, Sprite, Velocity)
 {
-    Sprite.setPosition(sf::Vector2f(50, 433));
+    Entity.setSize(playerSize);
+    Entity.setOutlineThickness(3.0f);
+    Entity.setFillColor(sf::Color::Transparent);
+    setPosition(50, 433);
     animation.loadTextures();
 }
 
@@ -12,58 +16,70 @@ Player::~Player()
 {
 }
 
-void Player::Draw(sf::RenderWindow &window)
+void Player::Update(double deltaTime)
 {
-    window.draw(Sprite);
+    // Frame Initialization
+    if(collider.bCollidingWithGround)
+        Velocity.x = 0.0;
+    
+    Velocity.y += 9.8f;
+    animation.Set(PLAYER_IDLE, 8);
+
+    // Input
+    Input();
+
+    // Update
+    animation.Animate();
+    Entity.move(Velocity.x * deltaTime, Velocity.y * deltaTime);
+    Sprite.move(Velocity.x * deltaTime, Velocity.y * deltaTime);
+}
+
+void Player::Input()
+{
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+        setPosition(50.f, 433.0f);
+    
+    if(collider.bCollidingWithGround)
+    {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            animation.lookRight = true;
+            Velocity.x = moveSpeed;
+        }
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+            animation.lookRight = false;
+            Velocity.x = -moveSpeed;
+        }
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Q))) {
+            animation.Set(PLAYER_RUN, 8);
+            Velocity.x *= 2.50f;
+        }
+
+        if(!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Q)))
+            animation.Set(PLAYER_WALK, 7);
+    }
+
+    else
+        animation.Set(PLAYER_JUMP, 8);
 }
 
 void Player::Jumped(sf::Event &event)
 {
-    if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space && !Jumping ) {
-        Jumping = true;
-        Velocity.y -= jumpForce / 45;
+    if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space && collider.bCollidingWithGround) {
+        Velocity.y -= jumpForce;
+        collider.bCollidingWithGround = false;
     }
 }
 
-void Player::Update(double deltaTime)
+void Player::Draw(sf::RenderWindow &window)
 {
-    animation.Set(PLAYER_IDLE, 8);
+    window.draw(Sprite);
+    window.draw(Entity);
+}
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-        Sprite.setPosition(sf::Vector2f(50, 433));
-
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) && !Jumping) {
-        animation.Set(PLAYER_RUN, 8);
-        moveSpeed = 300.0f;
-    }
-
-    if(!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) && !Jumping) {
-        animation.Set(PLAYER_WALK, 7);
-        moveSpeed = 200.0f;
-    }
-
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-        animation.lookRight = true;
-        Velocity.x = moveSpeed * deltaTime;
-    }
-    
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
-        animation.lookRight = false;
-        Velocity.x = -moveSpeed * deltaTime;
-    }
-
-    if(Jumping) {
-        animation.Set(PLAYER_JUMP, 8);
-        Velocity.y += 9.8f * deltaTime;
-        Sprite.move(0, Velocity.y);
-
-        if(Sprite.getPosition().y > 433.0f) {
-            Sprite.setPosition(Sprite.getPosition().x, 433.0f);
-            Jumping = false;
-        }
-    }
-
-    animation.Animate();
-    Sprite.move(Velocity.x, 0);
-    Velocity.x = 0.0;
+void Player::setPosition(double x, double y)
+{
+    Entity.setPosition(x, y);
+    Sprite.setPosition(x - playerSize.x, y - playerSize.y);
 }
