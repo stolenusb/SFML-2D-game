@@ -25,7 +25,7 @@ int main()
     const double moveSpeed = 100.f;
     const double jumpForce = 400.f;
     
-    Player player(playerSize, moveSpeed, jumpForce);
+    Player player(window, playerSize, moveSpeed, jumpForce);
 
         // ------- Platforms -----
     Platform background("background.jpg", windowSize, sf::Vector2f(0.f, 0.f));
@@ -49,7 +49,7 @@ int main()
                 player.Jump();
             }
         }
-
+        
         // ------------------- PLAYER ----------------------
         player.Update();
 
@@ -68,7 +68,7 @@ int main()
             window.draw(platforms[i].Entity);
 
         // Player render  
-        player.Draw(window);
+        player.Draw();
         
         // Displaying frame.
         window.display();

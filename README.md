@@ -6,6 +6,6 @@ Current game features:
 - Basic animations (idle, walk, run, jump)
 - Basic background & ground textures.
 - Player collision with surfaces.
-- Player projectile attack (Expiremental).
+- Unlimited Player projectiles attack sent to mouse position (Left mouse button).
 
 ![game](https://github.com/stolenusb/SFML-2D-game/assets/17284200/2d0eeb4d-0ebc-4fc9-afa2-a27bca4d1bac)

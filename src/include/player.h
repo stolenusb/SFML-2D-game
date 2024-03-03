@@ -1,9 +1,11 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 #include <SFML\Graphics.hpp>
 #include "animation.h"
 #include "collision.h"
+#include "projectile.h"
 
 enum PLAYER_TEXTURES
 {
@@ -12,19 +14,20 @@ enum PLAYER_TEXTURES
     PLAYER_RUN,
     PLAYER_JUMP,
     PLAYER_ATTACK,
-    PLAYER_BULLET,
+    PLAYER_PROJECTILE,
     PLAYER_TEXTURES_COUNT
 };
 
 class Player
 {
 public:
-    Player(sf::Vector2f playerSize, double moveSpeed, double jumpForce);
+    Player(sf::RenderWindow &window, sf::Vector2f playerSize, double moveSpeed, double jumpForce);
     ~Player();
 
     void Update();
     void Jump();
-    void Draw(sf::RenderWindow &window);  
+    void Shoot();
+    void Draw();  
 
     Collider collider;  
 
@@ -33,18 +36,20 @@ private:
     void setPosition(double x, double y);
     void Input();
 
+    sf::Clock clock;
+    sf::RenderWindow &window;
+
+    sf::Vector2f playerSize;
     sf::RectangleShape Entity;
     sf::Sprite Sprite;
     sf::Texture Texture[PLAYER_TEXTURES_COUNT];
     Animation animation;
+
     sf::Vector2f Velocity;
-    sf::Vector2f playerSize;
-    sf::Clock clock;
     double moveSpeed;
     double jumpForce;
-
-    sf::Sprite Bullet;
-    Animation animationBullet;
-    bool bulletAttack = false;
-    double bulletVelocity;
+    float projectileSpeed = 100.f;
+    
+    Projectile projectile;
+    std::vector<Projectile> projectiles;
 };
