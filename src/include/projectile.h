@@ -7,7 +7,7 @@
 class Projectile
 {
 public:
-    Projectile(sf::RenderWindow &gameWindow, sf::RectangleShape &playerEntity, sf::Texture &projectileTexture);
+    Projectile(sf::RenderWindow &gameWindow, sf::Sprite &playerEntity, sf::Texture &projectileTexture);
     ~Projectile();
 
     void Set();
@@ -17,7 +17,7 @@ public:
 private:
     sf::RenderWindow &window;
 
-    sf::RectangleShape &playerEntity;
+    sf::Sprite &playerEntity;
     sf::Sprite projectileSprite;
     sf::Texture &projectileTexture;
     Animation projectileAnim;

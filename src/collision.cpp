@@ -20,6 +20,7 @@ bool Collider::checkCollision(sf::RectangleShape &otherEntity)
     // Get entities Position & half size
     sf::Vector2f otherEntityHalfSize = otherEntity.getSize() / 2.0f;
     sf::Vector2f otherEntityPosition = otherEntity.getPosition() + otherEntityHalfSize;
+    
     sf::Vector2f playerEntityHalfSize = playerEntity.getSize() / 2.0f;
     sf::Vector2f playerEntityPosition = playerEntity.getPosition() + playerEntityHalfSize;
     

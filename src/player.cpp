@@ -1,19 +1,18 @@
 #include "player.h"
 
-Player::Player(sf::RenderWindow &window, sf::Vector2f playerSize, double moveSpeed, double jumpForce) :
-    window(window),
-    playerSize(playerSize),
+Player::Player(sf::RenderWindow &window, sf::Vector2f entitySize, float moveSpeed, float jumpForce) :
+    entitySize(entitySize),
     moveSpeed(moveSpeed),
     jumpForce(jumpForce),
     animation(Sprite, 128),
     collider(Entity, Sprite, Velocity),
-    projectile(window, Entity, Texture[PLAYER_PROJECTILE])
+    projectile(window, Sprite, Texture[PLAYER_PROJECTILE])
 {
     setPosition(50.f, 433.f);
 
-    Entity.setSize(playerSize);
+    Entity.setSize(entitySize);
     Entity.setFillColor(sf::Color::Transparent);
-
+    
     //For debug only:
     //Entity.setOutlineThickness(3.0f);
     loadTextures();
@@ -21,20 +20,6 @@ Player::Player(sf::RenderWindow &window, sf::Vector2f playerSize, double moveSpe
 
 Player::~Player()
 {
-}
-
-void Player::loadTextures()
-{
-    if( !Texture[PLAYER_IDLE].loadFromFile("..\\assets\\textures\\magician\\idle.png") ||
-        !Texture[PLAYER_WALK].loadFromFile("..\\assets\\textures\\magician\\walk.png") ||
-        !Texture[PLAYER_RUN].loadFromFile("..\\assets\\textures\\magician\\run.png") ||
-        !Texture[PLAYER_JUMP].loadFromFile("..\\assets\\textures\\magician\\jump.png") ||
-        !Texture[PLAYER_ATTACK].loadFromFile("..\\assets\\textures\\magician\\attack_1.png") ||
-        !Texture[PLAYER_PROJECTILE].loadFromFile("..\\assets\\textures\\magician\\charge_1.png"))
-
-        std::cout << "(-) Failed to load one of the player textures." << std::endl;
-    else
-        std::cout << "(+) Loaded player textures." << std::endl;
 }
 
 void Player::Update()
@@ -114,7 +99,7 @@ void Player::Shoot()
     projectiles[projectiles.size() - 1].Set();
 }
 
-void Player::Draw()
+void Player::Draw(sf::RenderWindow &window)
 {
     for(int i = 0; i < projectiles.size(); i++)
         projectiles[i].Draw();
@@ -123,8 +108,22 @@ void Player::Draw()
     window.draw(Entity);
 }
 
-void Player::setPosition(double x, double y)
+void Player::setPosition(float x, float y)
 {
     Entity.setPosition(x, y);
-    Sprite.setPosition(x - playerSize.x, y - playerSize.y);
+    Sprite.setPosition(x - entitySize.x, y - entitySize.y);
+}
+
+void Player::loadTextures()
+{
+    if( !Texture[PLAYER_IDLE].loadFromFile("..\\assets\\textures\\magician\\idle.png") ||
+        !Texture[PLAYER_WALK].loadFromFile("..\\assets\\textures\\magician\\walk.png") ||
+        !Texture[PLAYER_RUN].loadFromFile("..\\assets\\textures\\magician\\run.png") ||
+        !Texture[PLAYER_JUMP].loadFromFile("..\\assets\\textures\\magician\\jump.png") ||
+        !Texture[PLAYER_ATTACK].loadFromFile("..\\assets\\textures\\magician\\attack_1.png") ||
+        !Texture[PLAYER_PROJECTILE].loadFromFile("..\\assets\\textures\\magician\\charge_1.png"))
+
+        std::cout << "(-) Failed to load one of the player textures." << std::endl;
+    else
+        std::cout << "(+) Loaded player textures." << std::endl;
 }

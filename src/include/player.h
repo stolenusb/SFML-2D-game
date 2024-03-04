@@ -21,33 +21,32 @@ enum PLAYER_TEXTURES
 class Player
 {
 public:
-    Player(sf::RenderWindow &window, sf::Vector2f playerSize, double moveSpeed, double jumpForce);
+    Player(sf::RenderWindow &window, sf::Vector2f entitySize, float moveSpeed, float jumpForce);
     ~Player();
 
     void Update();
     void Jump();
     void Shoot();
-    void Draw();  
+    void Draw(sf::RenderWindow &window);  
 
     Collider collider;  
 
 private:
+    void setPosition(float x, float y);
     void loadTextures();
-    void setPosition(double x, double y);
     void Input();
 
     sf::Clock clock;
-    sf::RenderWindow &window;
 
-    sf::Vector2f playerSize;
+    sf::Vector2f entitySize;
     sf::RectangleShape Entity;
     sf::Sprite Sprite;
     sf::Texture Texture[PLAYER_TEXTURES_COUNT];
     Animation animation;
 
     sf::Vector2f Velocity;
-    double moveSpeed;
-    double jumpForce;
+    float moveSpeed;
+    float jumpForce;
     float projectileSpeed = 100.f;
     
     Projectile projectile;

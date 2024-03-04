@@ -1,6 +1,7 @@
 #include <SFML\Graphics.hpp>
 
 #include "player.h"
+#include "enemy.h"
 #include "platform.h"
 
 enum PLATFORMS {
@@ -16,16 +17,19 @@ int main()
     // -------------------------------------------------- INITIALIZATION ------------------------------------------------------------
         // ------- Window -------
     sf::Vector2f windowSize(1280.f, 720.f);
+    const sf::Vector2f entitySize = sf::Vector2f(42.f, 64.f);
 
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "GameProject");
     window.setFramerateLimit(60);
 
         // ------- Player --------
-    const sf::Vector2f playerSize = sf::Vector2f(42.f, 64.f);
-    const double moveSpeed = 100.f;
-    const double jumpForce = 400.f;
+    const float moveSpeed = 100.f;
+    const float jumpForce = 400.f;
     
-    Player player(window, playerSize, moveSpeed, jumpForce);
+    Player player(window, entitySize, moveSpeed, jumpForce);
+        // ------- Enemy ---------
+    Enemy enemy(entitySize, 750.f);
+    Enemy enemy1(entitySize, 900.f);
 
         // ------- Platforms -----
     Platform background("background.jpg", windowSize, sf::Vector2f(0.f, 0.f));
@@ -50,12 +54,17 @@ int main()
             }
         }
         
-        // ------------------- PLAYER ----------------------
+        // ------------------- ENTITIES ----------------------
         player.Update();
+        enemy.Update();
+        enemy1.Update();
 
-        // Player collision with platforms.
-        for(int i = 0; i < PLATFORM_COUNT; i++)
+        // Entity collision with platforms.
+        for(int i = 0; i < PLATFORM_COUNT; i++) {
             player.collider.checkCollision(platforms[i].Entity);
+            enemy.collider.checkCollision(platforms[i].Entity);
+            enemy1.collider.checkCollision(platforms[i].Entity);
+        }   
 
         // ------------------- RENDER ----------------------
         // Clearing frame
@@ -67,8 +76,10 @@ int main()
         for(int i = 0; i < PLATFORM_COUNT; i++)
             window.draw(platforms[i].Entity);
 
-        // Player render  
-        player.Draw();
+        // Entity render  
+        player.Draw(window);
+        enemy.Draw(window);
+        enemy1.Draw(window);
         
         // Displaying frame.
         window.display();

@@ -1,6 +1,6 @@
 #include "projectile.h"
 
-Projectile::Projectile(sf::RenderWindow &gameWindow, sf::RectangleShape &playerEntity, sf::Texture &projectileTexture) : 
+Projectile::Projectile(sf::RenderWindow &gameWindow, sf::Sprite &playerEntity, sf::Texture &projectileTexture) : 
     projectileAnim(projectileSprite, 64), playerEntity(playerEntity), projectileTexture(projectileTexture), window(gameWindow)
 {
 }
@@ -12,6 +12,7 @@ Projectile::~Projectile()
 void Projectile::Set()
 {
     projectileSprite.setPosition(playerEntity.getPosition());
+    projectileSprite.setScale(1.5f, 1.5f);
     projectileAnim.Set(projectileTexture, 9);
     
     projectilePos.x = sf::Mouse::getPosition(window).x - playerEntity.getPosition().x;
