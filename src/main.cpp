@@ -77,7 +77,7 @@ int main()
             window.draw(platforms[i].Entity);
 
         // Entity render  
-        player.Draw(window);
+        player.Draw();
         enemy.Draw(window);
         enemy1.Draw(window);
         

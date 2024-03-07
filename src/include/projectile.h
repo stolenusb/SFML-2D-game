@@ -7,21 +7,18 @@
 class Projectile
 {
 public:
-    Projectile(sf::RenderWindow &gameWindow, sf::Sprite &playerEntity, sf::Texture &projectileTexture);
+    Projectile(sf::Texture &projectileTexture);
     ~Projectile();
 
-    void Set();
-    void Move(float projectileSpeed, double deltaTime);
-    void Draw() { window.draw(projectileSprite); };
+    void Update(float projectileSpeed, double deltaTime);
+    void Add(sf::Vector2i windowPos, sf::Vector2f playerPos);
+    void Draw(sf::RenderWindow &window);
 
 private:
-    sf::RenderWindow &window;
-
-    sf::Sprite &playerEntity;
     sf::Sprite projectileSprite;
     sf::Texture &projectileTexture;
-    Animation projectileAnim;
-    
-    sf::Vector2f projectilePos;
-    float projectileAngle;
+
+    std::vector<sf::Sprite> projectile;
+    std::vector<float> projectileAngle;
+    //std::vector<Animation> projectileAnim;
 };

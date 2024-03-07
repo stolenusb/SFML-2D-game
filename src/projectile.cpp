@@ -1,7 +1,7 @@
 #include "projectile.h"
 
-Projectile::Projectile(sf::RenderWindow &gameWindow, sf::Sprite &playerEntity, sf::Texture &projectileTexture) : 
-    projectileAnim(projectileSprite, 64), playerEntity(playerEntity), projectileTexture(projectileTexture), window(gameWindow)
+Projectile::Projectile(sf::Texture &projectileTexture) : 
+    projectileTexture(projectileTexture)
 {
 }
 
@@ -9,19 +9,35 @@ Projectile::~Projectile()
 {
 }
 
-void Projectile::Set()
+void Projectile::Update(float projectileSpeed, double deltaTime)
 {
-    projectileSprite.setPosition(playerEntity.getPosition());
-    projectileSprite.setScale(1.5f, 1.5f);
-    projectileAnim.Set(projectileTexture, 9);
-    
-    projectilePos.x = sf::Mouse::getPosition(window).x - playerEntity.getPosition().x;
-    projectilePos.y = sf::Mouse::getPosition(window).y - playerEntity.getPosition().y;
-    projectileAngle = atan2(projectilePos.y, projectilePos.x);
+    for(int i = 0; i < projectile.size(); i++) {
+        projectile[i].move(projectileSpeed * cos(projectileAngle[i]) * deltaTime, projectileSpeed * sin(projectileAngle[i]) * deltaTime);
+        //projectileAnim[i].Animate();
+        if(projectile[i].getPosition().x <= 0.f || projectile[i].getPosition().y <= 0.f || projectile[i].getPosition().x >= 1280.f || projectile[i].getPosition().y >= 720.f ) {
+            projectile.erase(projectile.begin() + i);
+            projectileAngle.erase(projectileAngle.begin() + i);
+        }
+    }
 }
 
-void Projectile::Move(float projectileSpeed, double deltaTime)
+void Projectile::Add(sf::Vector2i windowPos, sf::Vector2f playerPos)
 {
-    projectileSprite.move(projectileSpeed * cos(projectileAngle) * deltaTime, projectileSpeed * sin(projectileAngle) * deltaTime);
-    projectileAnim.Animate();
+    projectileSprite.setPosition(playerPos);
+    projectileSprite.setScale(1.5f, 1.5f);
+    projectileSprite.setTexture(projectileTexture);
+    projectileSprite.setTextureRect(sf::IntRect(0, 0, 64, 64));
+    projectile.push_back(projectileSprite);
+
+    //projectileAnim.push_back(Animation(projectile[projectile.size() - 1], 64));
+    //projectileAnim[projectileAnim.size() - 1].Set(projectileTexture, 9);
+
+    sf::Vector2f projectilePos = sf::Vector2f(windowPos.x - playerPos.x, windowPos.y - playerPos.y);
+    projectileAngle.push_back(atan2(projectilePos.y, projectilePos.x));
+}
+
+void Projectile::Draw(sf::RenderWindow &window)
+{
+    for(int i = 0; i < projectile.size(); i++)
+        window.draw(projectile[i]);
 }

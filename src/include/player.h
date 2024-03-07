@@ -26,8 +26,7 @@ public:
 
     void Update();
     void Jump();
-    void Shoot();
-    void Draw(sf::RenderWindow &window);  
+    void Draw();  
 
     Collider collider;  
 
@@ -37,6 +36,7 @@ private:
     void Input();
 
     sf::Clock clock;
+    sf::RenderWindow &window;
 
     sf::Vector2f entitySize;
     sf::RectangleShape Entity;
@@ -49,6 +49,5 @@ private:
     float jumpForce;
     float projectileSpeed = 100.f;
     
-    Projectile projectile;
-    std::vector<Projectile> projectiles;
+    Projectile projectiles;
 };

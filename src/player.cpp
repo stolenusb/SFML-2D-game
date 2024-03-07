@@ -1,20 +1,22 @@
 #include "player.h"
 
 Player::Player(sf::RenderWindow &window, sf::Vector2f entitySize, float moveSpeed, float jumpForce) :
+    window(window),
     entitySize(entitySize),
     moveSpeed(moveSpeed),
     jumpForce(jumpForce),
     animation(Sprite, 128),
     collider(Entity, Sprite, Velocity),
-    projectile(window, Sprite, Texture[PLAYER_PROJECTILE])
+    projectiles(Texture[PLAYER_PROJECTILE])
 {
+    // Initial player position
     setPosition(50.f, 433.f);
 
     Entity.setSize(entitySize);
     Entity.setFillColor(sf::Color::Transparent);
-    
     //For debug only:
-    //Entity.setOutlineThickness(3.0f);
+    Entity.setOutlineThickness(1.0f);
+
     loadTextures();
 }
 
@@ -44,8 +46,7 @@ void Player::Update()
     Sprite.move(Velocity.x * deltaTime, Velocity.y * deltaTime);
 
     // Update Projectiles
-    for(int i = 0; i < projectiles.size(); i++)
-        projectiles[i].Move(projectileSpeed, deltaTime);
+    projectiles.Update(projectileSpeed, deltaTime);
 }
 
 void Player::Input()
@@ -75,8 +76,11 @@ void Player::Input()
         if(!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Q)))
             animation.Set(Texture[PLAYER_WALK], 7);
         
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-            Shoot();
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && collider.bCollidingWithGround) {
+            Velocity.x = 0.f;
+            animation.Set(Texture[PLAYER_ATTACK], 7);
+
+            projectiles.Add(sf::Mouse::getPosition(window), Sprite.getPosition());
         }
     }
 
@@ -90,19 +94,9 @@ void Player::Jump()
     collider.bCollidingWithGround = false;
 }
 
-void Player::Shoot()
+void Player::Draw()
 {
-    Velocity.x = 0.f;
-    animation.Set(Texture[PLAYER_ATTACK], 7);
-    
-    projectiles.push_back(projectile);
-    projectiles[projectiles.size() - 1].Set();
-}
-
-void Player::Draw(sf::RenderWindow &window)
-{
-    for(int i = 0; i < projectiles.size(); i++)
-        projectiles[i].Draw();
+    projectiles.Draw(window);
     
     window.draw(Sprite);
     window.draw(Entity);
