@@ -1,5 +1,3 @@
-#include <SFML\Graphics.hpp>
-
 #include "player.h"
 #include "enemy.h"
 #include "platform.h"
@@ -27,9 +25,6 @@ int main()
     const float jumpForce = 400.f;
     
     Player player(window, entitySize, moveSpeed, jumpForce);
-        // ------- Enemy ---------
-    Enemy enemy(entitySize, 750.f);
-    Enemy enemy1(entitySize, 900.f);
 
         // ------- Platforms -----
     Platform background("background.jpg", windowSize, sf::Vector2f(0.f, 0.f));
@@ -39,6 +34,9 @@ int main()
         Platform("", sf::Vector2f(150.f, 40.f), sf::Vector2f(400.f, 420.f)),
         Platform("", sf::Vector2f(150.f, 40.f), sf::Vector2f(600.f, 320.f))
     };
+
+            // ------- Enemy ---------
+    Enemy enemy(entitySize, 750.f);
 
     // ---------------------------------------------------- GAME LOOP -----------------------------------------------------------------
     while(window.isOpen())
@@ -57,14 +55,14 @@ int main()
         // ------------------- ENTITIES ----------------------
         player.Update();
         enemy.Update();
-        enemy1.Update();
 
         // Entity collision with platforms.
         for(int i = 0; i < PLATFORM_COUNT; i++) {
             player.collider.checkCollision(platforms[i].Entity);
             enemy.collider.checkCollision(platforms[i].Entity);
-            enemy1.collider.checkCollision(platforms[i].Entity);
-        }   
+        }
+
+        player.projectiles.checkCollision(enemy);
 
         // ------------------- RENDER ----------------------
         // Clearing frame
@@ -79,7 +77,6 @@ int main()
         // Entity render  
         player.Draw();
         enemy.Draw(window);
-        enemy1.Draw(window);
         
         // Displaying frame.
         window.display();

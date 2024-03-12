@@ -2,9 +2,10 @@
 
 Enemy::Enemy(sf::Vector2f entitySize, float positionX) :
     entitySize(entitySize),
-    animation(Sprite, 128),
     collider(Entity, Sprite, Velocity)
 {
+    animation.loadTextures(ENEMY_ANIMS);
+
     setPosition(positionX, 433.f);
 
     Entity.setSize(entitySize);
@@ -12,8 +13,6 @@ Enemy::Enemy(sf::Vector2f entitySize, float positionX) :
 
     //For debug only:
     Entity.setOutlineThickness(1.0f);
-
-    loadTextures();
 }
 
 Enemy::~Enemy()
@@ -22,29 +21,31 @@ Enemy::~Enemy()
 
 void Enemy::Update()
 {
-    double deltaTime = clock.restart().asSeconds();
-
     // Frame Initialization
     if(collider.bCollidingWithGround)
         Velocity.x = 0.f;
     
     Velocity.y += 9.8f;
 
-    animation.Set(Texture[ENEMY_IDLE], 7);
+    Sprite.setColor(sf::Color::White);
+    animation.Set(ENEMY_IDLE, 7, sf::Vector2u(128, 128));
 
     // Update
-    animation.Animate();
+    animation.Animate(Sprite);
 
+    double deltaTime = clock.restart().asSeconds();
     Entity.move(Velocity.x * deltaTime, Velocity.y * deltaTime);
     Sprite.move(Velocity.x * deltaTime, Velocity.y * deltaTime);
 }
 
-void Enemy::loadTextures()
+void Enemy::Hurt(float damage)
 {
-    if(!Texture[ENEMY_IDLE].loadFromFile("..\\assets\\textures\\firewizard\\Idle.png"))
-        std::cout << "(-) Failed to load one of the enemy textures." << std::endl;
-    else
-        std::cout << "(+) Loaded enemy textures." << std::endl;
+    Health -= damage;
+    animation.Set(ENEMY_HURT, 3, sf::Vector2u(128, 128));
+    Sprite.setColor(sf::Color::Red);
+
+    if(Health == 0)
+        isDead = true;
 }
 
 void Enemy::setPosition(double x, double y)

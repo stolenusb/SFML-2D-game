@@ -5,10 +5,10 @@ Player::Player(sf::RenderWindow &window, sf::Vector2f entitySize, float moveSpee
     entitySize(entitySize),
     moveSpeed(moveSpeed),
     jumpForce(jumpForce),
-    animation(Sprite, 128),
-    collider(Entity, Sprite, Velocity),
-    projectiles(Texture[PLAYER_PROJECTILE])
+    collider(Entity, Sprite, Velocity)
 {
+    animation.loadTextures(PLAYER_ANIMS);
+
     // Initial player position
     setPosition(50.f, 433.f);
 
@@ -16,8 +16,6 @@ Player::Player(sf::RenderWindow &window, sf::Vector2f entitySize, float moveSpee
     Entity.setFillColor(sf::Color::Transparent);
     //For debug only:
     Entity.setOutlineThickness(1.0f);
-
-    loadTextures();
 }
 
 Player::~Player()
@@ -34,13 +32,13 @@ void Player::Update()
     
     Velocity.y += 9.8f;
 
-    animation.Set(Texture[PLAYER_IDLE], 8);
+    animation.Set(PLAYER_IDLE, 8, sf::Vector2u(128, 128));
 
     // Input
     Input();
 
     // Update
-    animation.Animate();
+    animation.Animate(Sprite);
 
     Entity.move(Velocity.x * deltaTime, Velocity.y * deltaTime);
     Sprite.move(Velocity.x * deltaTime, Velocity.y * deltaTime);
@@ -69,23 +67,23 @@ void Player::Input()
         }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Q))) {
-            animation.Set(Texture[PLAYER_RUN], 8);
+            animation.Set(PLAYER_RUN, 8, sf::Vector2u(128, 128));
             Velocity.x *= 2.5f;
         }
 
         if(!sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Q)))
-            animation.Set(Texture[PLAYER_WALK], 7);
+            animation.Set(PLAYER_WALK, 7, sf::Vector2u(128, 128));
         
         if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && collider.bCollidingWithGround) {
             Velocity.x = 0.f;
-            animation.Set(Texture[PLAYER_ATTACK], 7);
+            animation.Set(PLAYER_ATTACK, 7, sf::Vector2u(128, 128));
 
             projectiles.Add(sf::Mouse::getPosition(window), Sprite.getPosition());
         }
     }
 
     else
-        animation.Set(Texture[PLAYER_JUMP], 8);
+        animation.Set(PLAYER_JUMP, 8, sf::Vector2u(128, 128));
 }
 
 void Player::Jump()
@@ -106,18 +104,4 @@ void Player::setPosition(float x, float y)
 {
     Entity.setPosition(x, y);
     Sprite.setPosition(x - entitySize.x, y - entitySize.y);
-}
-
-void Player::loadTextures()
-{
-    if( !Texture[PLAYER_IDLE].loadFromFile("..\\assets\\textures\\magician\\idle.png") ||
-        !Texture[PLAYER_WALK].loadFromFile("..\\assets\\textures\\magician\\walk.png") ||
-        !Texture[PLAYER_RUN].loadFromFile("..\\assets\\textures\\magician\\run.png") ||
-        !Texture[PLAYER_JUMP].loadFromFile("..\\assets\\textures\\magician\\jump.png") ||
-        !Texture[PLAYER_ATTACK].loadFromFile("..\\assets\\textures\\magician\\attack_1.png") ||
-        !Texture[PLAYER_PROJECTILE].loadFromFile("..\\assets\\textures\\magician\\charge_1.png"))
-
-        std::cout << "(-) Failed to load one of the player textures." << std::endl;
-    else
-        std::cout << "(+) Loaded player textures." << std::endl;
 }
