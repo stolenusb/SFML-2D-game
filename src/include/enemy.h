@@ -29,6 +29,10 @@ private:
     Animation animation;
 
     sf::Vector2f Velocity;
-    float Health = 300.f;
+    sf::Text enemyHP;
+
+    sf::Font font;
+
+    unsigned int Health = 3000;
     bool isDead = false;
 };

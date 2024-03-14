@@ -29,8 +29,6 @@ void Animation::loadTextures(unsigned int animations)
         case PROJECTILE_ANIM:
             if( !Texture[PROJECTILE_ANIM].loadFromFile("..\\..\\assets\\textures\\magician\\charge_1.png"))
                 std::cout << "(-) Failed to load player projectile texture." << std::endl;
-            else
-                std::cout << "(+) Loaded player projectile texture." << std::endl;
             
             break;
     }

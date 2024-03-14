@@ -1,4 +1,5 @@
 #include "enemy.h"
+#include <iostream>
 
 Enemy::Enemy(sf::Vector2f entitySize, float positionX) :
     entitySize(entitySize),
@@ -13,6 +14,14 @@ Enemy::Enemy(sf::Vector2f entitySize, float positionX) :
 
     //For debug only:
     Entity.setOutlineThickness(1.0f);
+
+    if (!font.loadFromFile("..\\..\\assets\\font\\dynamictrooper.ttf"))
+        std::cout << "(-) Failed to load font" << std::endl;
+    
+    enemyHP.setCharacterSize(15);
+    enemyHP.setFont(font);
+    enemyHP.setFillColor(sf::Color::Blue);
+    enemyHP.setStyle(sf::Text::Bold);
 }
 
 Enemy::~Enemy()
@@ -29,13 +38,14 @@ void Enemy::Update()
 
     Sprite.setColor(sf::Color::White);
     animation.Set(ENEMY_IDLE, 7, sf::Vector2u(128, 128));
-
-    // Update
     animation.Animate(Sprite);
+
+    enemyHP.setString(std::to_string(Health));
 
     double deltaTime = clock.restart().asSeconds();
     Entity.move(Velocity.x * deltaTime, Velocity.y * deltaTime);
     Sprite.move(Velocity.x * deltaTime, Velocity.y * deltaTime);
+    enemyHP.setPosition(Sprite.getPosition().x + 32.f, Sprite.getPosition().y + 32.f);
 }
 
 void Enemy::Hurt(float damage)
@@ -52,10 +62,12 @@ void Enemy::setPosition(double x, double y)
 {
     Entity.setPosition(x, y);
     Sprite.setPosition(x - entitySize.x, y - entitySize.y);
+    enemyHP.setPosition(Sprite.getPosition());
 }
 
 void Enemy::Draw(sf::RenderWindow &window)
 {
     window.draw(Entity);
     window.draw(Sprite);
+    window.draw(enemyHP);
 }
