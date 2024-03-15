@@ -3,11 +3,11 @@
 #include "platform.h"
 
 enum PLATFORMS {
-    PLATFORM_GROUND,
-    PLATFORM_ONE,
-    PLATFORM_TWO,
-    PLATFORM_THREE,
-    PLATFORM_COUNT
+    OBJECT_GROUND,
+    OBJECT_ONE,
+    OBJECT_TWO,
+    OBJECT_THREE,
+    OBJECT_COUNT
 };
 
 int main()
@@ -20,15 +20,31 @@ int main()
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "GameProject");
     window.setFramerateLimit(60);
 
+        // ------ Main Menu ------
+    sf::Font font;
+    sf::Text PlayButton;
+
+    if (!font.loadFromFile("..\\..\\assets\\font\\dynamictrooper.ttf"))
+        std::cout << "(-) Failed to load font" << std::endl;
+    
+    sf::Vector2i PlayButtonPos(sf::Vector2i(100, 50));
+    PlayButton.setPosition(sf::Vector2f(PlayButtonPos));
+    PlayButton.setCharacterSize(100);
+    PlayButton.setFont(font);
+    PlayButton.setFillColor(sf::Color::White);
+    PlayButton.setStyle(sf::Text::Bold);
+    PlayButton.setLetterSpacing(1.5f);
+    PlayButton.setString("PLAY");
+    bool bMainMenu = true;
+    
         // ------- Player --------
     const float moveSpeed = 100.f;
     const float jumpForce = 400.f;
     
     Player player(window, entitySize, moveSpeed, jumpForce);
-
         // ------- Platforms -----
     Platform background("background.jpg", windowSize, sf::Vector2f(0.f, 0.f));
-    Platform platforms[PLATFORM_COUNT] = {
+    Platform object[OBJECT_COUNT] = {
         Platform("ground.jpg", sf::Vector2f(windowSize.x, 175.f), sf::Vector2f(0.f, windowSize.y - 175.f)),
         Platform("", sf::Vector2f(150.f, 40.f), sf::Vector2f(200.f, 520.f)),
         Platform("", sf::Vector2f(150.f, 40.f), sf::Vector2f(400.f, 420.f)),
@@ -44,39 +60,64 @@ int main()
         sf::Event event;
         while(window.pollEvent(event))
         {   
-            if(event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+            if(event.type == sf::Event::Closed)
                 window.close();
+            
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && !bMainMenu)
+                bMainMenu = true;
 
             if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space && player.collider.bCollidingWithGround) {
                 player.Jump();
             }
         }
         
-        // ------------------- ENTITIES ----------------------
-        player.Update();
-        enemy.Update();
-
-        // Entity collision with platforms.
-        for(int i = 0; i < PLATFORM_COUNT; i++) {
-            player.collider.checkCollision(platforms[i].Entity);
-            enemy.collider.checkCollision(platforms[i].Entity);
+        // Load Main Menu
+        if(bMainMenu)
+        {
+            // If Mouse position on play button.
+            if(     sf::Mouse::getPosition(window).x >= PlayButtonPos.x && sf::Mouse::getPosition(window).x <= (PlayButtonPos.x + 200.f) &&
+                    sf::Mouse::getPosition(window).y >= PlayButtonPos.y && sf::Mouse::getPosition(window).y <= (PlayButtonPos.y + 100.f)    )
+            {
+                PlayButton.setFillColor(sf::Color::Blue);
+                    // Exit Main Menu
+                    if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+                        bMainMenu = false;
+            } else
+                PlayButton.setFillColor(sf::Color::White);
+            
+            // Clearing frame
+            window.clear(sf::Color::Black);
+            window.draw(PlayButton);
         }
 
-        player.projectiles.checkCollision(enemy);
+        // Load Game if Exited main menu
+        else {
+            // ------------------- ENTITIES ----------------------
+            player.Update();
+            enemy.Update();
 
-        // ------------------- RENDER ----------------------
-        // Clearing frame
-        window.clear(sf::Color::Black);
+            // Entity collision with other objects/entities.
+            for(int i = 0; i < OBJECT_COUNT; i++) {
+                player.collider.checkCollision(object[i].Entity);
+                enemy.collider.checkCollision(object[i].Entity);
+            }
 
-        // Platforms Render
-        window.draw(background.Entity);
+            player.projectiles.checkCollision(enemy);
 
-        for(int i = 0; i < PLATFORM_COUNT; i++)
-            window.draw(platforms[i].Entity);
+            // ------------------- RENDER ----------------------
+            // Clearing frame
+            window.clear(sf::Color::Black);
 
-        // Entity render  
-        player.Draw();
-        enemy.Draw(window);
+            // Objects Render
+            window.draw(background.Entity);
+
+            for(int i = 0; i < OBJECT_COUNT; i++)
+                window.draw(object[i].Entity);
+
+            // Entity render  
+            player.Draw();
+            enemy.Draw(window);
+        }
         
         // Displaying frame.
         window.display();
